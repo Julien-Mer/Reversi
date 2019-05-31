@@ -1,0 +1,50 @@
+package reversi;
+
+import java.io.*;
+
+public class ReversiN {
+	private int size;
+	private int nbCoin;
+	private int MINSIZE = 4;
+	private Mode mode;
+	private Game gameplay;
+	String config;
+	
+	public ReversiN(String fileName, String playerName1, String playerName2) {
+		try {
+			this.configure(fileName);
+			Game game = new Game(playerName1, playerName2, mode);
+		} catch (Exception ex) {
+			System.out.println("Erreur de lecture de configuration " + ex.toString());
+		}
+	}
+	
+	public void configure(String fileName) throws Exception {
+		InputStream  in = new FileInputStream(fileName);
+		String config = "";
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(in)); 
+		String line = buffer.readLine(); 
+		while(line != null){ 
+			config += line + "\n";
+			line = buffer.readLine(); 
+		}
+		config = config.trim();
+		String[] elements = config.split(";");
+		this.MINSIZE = Integer.valueOf(elements[0]); 
+		this.size = Integer.valueOf(elements[1]);
+		this.nbCoin = Integer.valueOf(elements[2]);
+		int mode = Integer.valueOf(elements[3]);
+		if(mode == 0)
+			this.mode = Mode.AA;
+		else if(mode == 1)
+			this.mode = Mode.HA;
+		else if(mode == 2)
+			this.mode = Mode.HH;
+		this.config = config;
+	}
+	
+	public void printConfiguration() {
+		System.out.println(this.config);
+	}
+	
+}
