@@ -21,24 +21,30 @@ public class Square {
 		String res = "";
 		switch(this.color) {
 			case BLACK:
-				res = "\033[0;30m";
+				res = "N";
 				break;
 			case FREE:
-				res = "\u001b[32m";
+				res = "F";
 				break;
 			case WHITE:
-				res = "\033[0;37m";
+				res = "B";
 				break;
 			case NONE:
-				res = "\033[0;33m";
+				res = "0";
 				break;
 			default:
-				res = "\033[0;31m";
+				res = "f";
 				break;
 		}
-		res += "■";
-		res += "\033[0m";
 		return res;
+	}
+	
+	public boolean isFree() {
+		 return color==CoinColor.FREE;
+	}
+		
+	public boolean isForbidden() {
+		 return color==CoinColor.NONE;
 	}
 	
 }
