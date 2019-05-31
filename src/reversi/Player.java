@@ -6,7 +6,8 @@ public class Player {
 	protected Board board;
 	
 	public Player(String name, Board board) {
-		
+		this.board = board;
+		this.name = name;
 	}
 	
 	public void play() {
