@@ -15,16 +15,39 @@ public class Game implements IGame {
 	}
 	
 	public void start() {
-		boolean end = false;
+		boolean end = false, passed = false;
 		while(!end) {
 			Player p = timeLine.remove(0);
-			p.play();
+			if(p.board.getPossibilities(p.getCoinColor()).size() > 0) {
+				p.play();
+				passed = false;
+			} else {
+				if(passed) {
+					System.out.println("Plus personne ne peut jouer...");
+					end = true;
+				} else {
+					System.out.println("Le joueur " + p.name + " doit passer son tour...");
+					passed = true;
+				}
+			}
 			timeLine.add(p);
 		}
+		endOfGame();
 	}
 	
 	public void endOfGame() {
-		
+		System.out.println("--- Fin de la partie ---");
+		Player winner = null;
+		int scoreMax = 0;
+		for(Player p : timeLine) {
+			int score = p.board.getNbrCoins(p.getCoinColor());
+			System.out.println(p.name + ": " + score);
+			if(score >= scoreMax) {
+				scoreMax = score;
+				winner = p;
+			}
+		}
+		System.out.println("Victoire de " + winner.name + " avec un score de " + scoreMax);
 	}
 	
 	public Game(String playerName1, String playerName2, Mode mode) {

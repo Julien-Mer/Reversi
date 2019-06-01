@@ -17,16 +17,18 @@ public class HumanPlayer extends Player {
 			String[] data = input.split(",");
 			int x = Integer.valueOf(data[0]);
 			int y = Integer.valueOf(data[1]);
+			System.out.println("DAMN");
 			if(x >= this.board.getWidth())
 				throw new Exception("Coordonnées hors grille");
 			if(y >= this.board.getHeight())
 				throw new Exception("Coordonnées hors grille");
 			if(!this.board.setCoin(x, y, this.getCoinColor()))
 				throw new Exception("Mouvement impossible");
-		} catch (NullPointerException | NumberFormatException ex) {
+		} catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
 			System.out.println("Saisie invalide");
 			this.play();
 		} catch (Exception ex) {
+			System.out.println("ERROR " + ex.toString());
 		System.out.println(ex.getMessage());
 		this.play();
 	}
