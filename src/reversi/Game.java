@@ -38,6 +38,8 @@ public class Game implements IGame {
 			this.player2 = new HumanPlayer(playerName2, board);
 		else
 			this.player2 = new AutoPlayer(playerName2, board);
+		this.player1.setCoinColor(CoinColor.WHITE);
+		this.player2.setCoinColor(CoinColor.BLACK);
 		this.timeLine.add(this.player1);
 		this.timeLine.add(this.player2);
 		System.out.println("--- Début de la partie ---");

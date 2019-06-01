@@ -14,4 +14,14 @@ public class Player {
 		
 	}
 	
+	private CoinColor color;
+	
+	public void setCoinColor(CoinColor color) {
+		this.color = color;
+	}
+	
+	public CoinColor getCoinColor() {
+		return this.color;
+	}
+	
 }

@@ -17,6 +17,10 @@ public class Square {
 		return res;
 	}
 	
+	public void setColor(CoinColor color) {
+		this.color = color;
+	}
+	
 	public String getRepresentation() {
 		String res = "";
 		switch(this.color) {
