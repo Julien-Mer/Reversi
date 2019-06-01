@@ -2,6 +2,7 @@ package reversi;
 
 import java.util.ArrayList;
 
+import controllers.clickListener;
 import view.GridTableFrame;
 
 public class Board {
@@ -11,11 +12,38 @@ public class Board {
 	private Square[][] grid;
 	ArrayList<Square> changes;
 	private GridTableFrame view;
+	private CoinColor playingColor;
+	private boolean terminal;
+	private Game game;
 	
 	public Board(int width, int height) {
 		this.width = width;
 		this.height = height;
 		this.grid = new Square[width][height];
+	}
+	
+	public void setTerminal(boolean terminal) {
+		this.terminal = terminal;
+	}
+	
+	public boolean getTerminal() {
+		return this.terminal;
+	}
+	
+	public Game getGame() {
+		return this.game;
+	}
+	
+	public void setGame(Game game) {
+		this.game = game;
+	}
+	
+	public void setPlayingColor(CoinColor color) {
+		this.playingColor = color;
+	}
+	
+	public CoinColor getPlayingColor() {
+		return this.playingColor;
 	}
 	
 	public Square[][] getGrid() {
@@ -26,9 +54,21 @@ public class Board {
 		this.view = view;
 	}
 	
-	public void displayMap() {
-		System.out.println(this.toString());
-		view.refresh(grid);
+	public void setColorView(CoinColor color) {
+		this.view.setColor(color);
+	}
+	
+	public GridTableFrame getView() {
+		return this.view;
+	}
+	
+	public void displayMap(CoinColor color) {
+		if(this.terminal)
+			System.out.println(this.toString());
+		else {
+			view.refresh(grid, color);
+			view.getTable().addMouseListener(new clickListener(this));
+		}
 	}
 	
 	public int getNbrCoins(CoinColor color) {
@@ -59,7 +99,7 @@ public class Board {
 		boolean res = false;
 		if(this.grid[x][y].isFree() && this.checkAlignment(x, y, color)) {
 			this.changeCoin(x,y,color);
-			this.displayMap();
+			this.displayMap(color);
 			res = true;
 		}
 		return res;

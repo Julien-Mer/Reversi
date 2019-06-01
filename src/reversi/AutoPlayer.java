@@ -8,6 +8,8 @@ public class AutoPlayer extends Player {
 	
 	public void play() {
 		System.out.println("Autoplay");
+		this.board.displayMap(this.getCoinColor());
+		this.board.getGame().play();
 	}
 	
 }

@@ -18,28 +18,33 @@ public class Game implements IGame {
 		return this.board;
 	}
 	
+	Boolean passed = false;
+	
+	public void play() {
+		Player p = timeLine.remove(0);
+		timeLine.add(p);
+		board.setPlayingColor(p.getCoinColor());
+		if(p.board.getPossibilities(p.getCoinColor()).size() > 0) {
+			p.play();
+			passed = false;
+		} else {
+			if(passed) {
+				System.out.println("Plus personne ne peut jouer...");
+				endOfGame();
+			} else {
+				System.out.println("Le joueur " + p.name + " doit passer son tour...");
+				this.board.displayMap(p.getCoinColor());
+				passed = true;
+				this.play();
+			}
+		}
+	}
+	
 	public void start() {
 		System.out.println("--- Début de la partie ---");
-		this.board.displayMap();
-		
-		boolean end = false, passed = false;
-		while(!end) {
-			Player p = timeLine.remove(0);
-			if(p.board.getPossibilities(p.getCoinColor()).size() > 0) {
-				p.play();
-				passed = false;
-			} else {
-				if(passed) {
-					System.out.println("Plus personne ne peut jouer...");
-					end = true;
-				} else {
-					System.out.println("Le joueur " + p.name + " doit passer son tour...");
-					passed = true;
-				}
-			}
-			timeLine.add(p);
-		}
-		endOfGame();
+		this.board.displayMap(CoinColor.BLACK);
+		this.board.setGame(this);
+		this.play();
 	}
 	
 	public void endOfGame() {

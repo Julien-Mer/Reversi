@@ -10,25 +10,29 @@ public class HumanPlayer extends Player {
 	}
 	
 	public void play() {
-		System.out.println(this.name + ", à vous de jouer: -> x,y");
-		scan = new Scanner(System.in);
-		String input = scan.nextLine();
-		try {
-			String[] data = input.split(",");
-			int x = Integer.valueOf(data[0]);
-			int y = Integer.valueOf(data[1]);
-			if(x >= this.board.getWidth())
-				throw new Exception("Coordonnées hors grille");
-			if(y >= this.board.getHeight())
-				throw new Exception("Coordonnées hors grille");
-			if(!this.board.setCoin(x, y, this.getCoinColor()))
-				throw new Exception("Mouvement impossible");
-		} catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
-			System.out.println("Saisie invalide");
-			this.play();
-		} catch (Exception ex) {
-		System.out.println(ex.getMessage());
-		this.play();
+		this.board.setColorView(this.getCoinColor());
+		if(this.board.getTerminal()) {
+			System.out.println(this.name + ", à vous de jouer: -> x,y");
+			scan = new Scanner(System.in);
+			String input = scan.nextLine();
+			try {
+				String[] data = input.split(",");
+				int x = Integer.valueOf(data[0]);
+				int y = Integer.valueOf(data[1]);
+				if(x >= this.board.getWidth())
+					throw new Exception("Coordonnées hors grille");
+				if(y >= this.board.getHeight())
+					throw new Exception("Coordonnées hors grille");
+				if(!this.board.setCoin(x, y, this.getCoinColor()))
+					throw new Exception("Mouvement impossible");
+			} catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
+				System.out.println("Saisie invalide");
+				this.play();
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+				this.play();
+			}
+			this.board.getGame().play();
 		}
 	}
 }

@@ -16,17 +16,20 @@ public class ReversiN {
 	public ReversiN(String fileName, String playerName1, String playerName2) {
 		try {
 			this.configure(fileName);
-			Game game = new Game(playerName1, playerName2, mode);
-			GridTableFrame view = new GridTableFrame(game.getBoard().getGrid());
-			game.getBoard().setView(view);
+			this.gameplay = new Game(playerName1, playerName2, mode);
+			GridTableFrame view = new GridTableFrame(this.gameplay.getBoard().getGrid());
+			this.gameplay.getBoard().setView(view);
 			System.out.println("Jouer sur terminal ? Oui ou non");
 			Scanner scan = new Scanner(System.in);
 			String response = "";
 			while(!response.equalsIgnoreCase("OUI") && !response.equalsIgnoreCase("NON"))
 				 response = scan.nextLine();
-			if(response.equalsIgnoreCase("NON"))
+			if(response.equalsIgnoreCase("NON")) {
+				this.gameplay.getBoard().setTerminal(false);
 				view.showIt();
-			game.start();
+			} else
+				this.gameplay.getBoard().setTerminal(true);
+			this.gameplay.start();
 		} catch (Exception ex) {
 			System.out.println("Erreur de lecture de configuration " + ex.toString());
 		}
