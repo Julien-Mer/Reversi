@@ -29,7 +29,8 @@ public class Game implements IGame {
 	
 	public Game(String playerName1, String playerName2, Mode mode) {
 		Board board = new Board(15, 15);
-		this.initalizeBoard();
+		System.out.println("--- Initialisation du tableau ---");
+		this.initalizeBoard(board);
 		if(mode == Mode.AA)
 			this.player1 = new AutoPlayer(playerName1, board);
 		else
@@ -47,7 +48,21 @@ public class Game implements IGame {
 		this.start();
 	}
 	
-	private void initalizeBoard() {
-		
+	private void initalizeBoard(Board board) {
+		for(int i = 0; i < board.getWidth(); i++) {
+			for(int j = 0; j < board.getHeight(); j++) {
+				CoinColor color;
+				if(j > ((board.getWidth()/2) + i) || (i > (board.getHeight()/2) && j < i - (board.getWidth()/2)))
+					color = CoinColor.NONE;
+				else if(j == board.getWidth()/2 && i == board.getHeight()/2 || j == board.getWidth()/2+1 && i == board.getWidth()/2+1)
+					color = CoinColor.WHITE;
+				else if(j == board.getWidth()/2 && i == board.getHeight()/2+1 || j == board.getWidth()/2+1 && i == board.getWidth()/2)
+					color = CoinColor.BLACK;
+				else
+					color = CoinColor.FREE;
+				board.setSquare(i, j, new Square(i, j, color));
+				
+			}
+		}
 	}
 }

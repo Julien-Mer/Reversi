@@ -23,7 +23,6 @@ public class HumanPlayer extends Player {
 				throw new Exception("Coordonnées hors grille");
 			if(!this.board.setCoin(x, y, this.getCoinColor()))
 				throw new Exception("Mouvement impossible");
-			
 		} catch (NullPointerException | NumberFormatException ex) {
 			System.out.println("Saisie invalide");
 			this.play();

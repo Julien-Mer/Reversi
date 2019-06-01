@@ -47,6 +47,14 @@ public class Square {
 		 return color==CoinColor.FREE;
 	}
 		
+	public CoinColor getColor() {
+		return this.color;
+	}
+	
+	public boolean isUsed() {
+		return !isFree() && !isForbidden();
+	}
+	
 	public boolean isForbidden() {
 		 return color==CoinColor.NONE;
 	}
