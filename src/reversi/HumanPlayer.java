@@ -17,7 +17,6 @@ public class HumanPlayer extends Player {
 			String[] data = input.split(",");
 			int x = Integer.valueOf(data[0]);
 			int y = Integer.valueOf(data[1]);
-			System.out.println("DAMN");
 			if(x >= this.board.getWidth())
 				throw new Exception("Coordonnées hors grille");
 			if(y >= this.board.getHeight())
@@ -28,9 +27,8 @@ public class HumanPlayer extends Player {
 			System.out.println("Saisie invalide");
 			this.play();
 		} catch (Exception ex) {
-			System.out.println("ERROR " + ex.toString());
 		System.out.println(ex.getMessage());
 		this.play();
-	}
+		}
 	}
 }

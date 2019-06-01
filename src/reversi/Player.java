@@ -10,9 +10,7 @@ public class Player {
 		this.name = name;
 	}
 	
-	public void play() {
-		
-	}
+	public void play() { }
 	
 	private CoinColor color;
 	

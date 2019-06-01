@@ -1,6 +1,9 @@
 package reversi;
 
 import java.io.*;
+import java.util.Scanner;
+
+import view.*;
 
 public class ReversiN {
 	private int size;
@@ -14,6 +17,16 @@ public class ReversiN {
 		try {
 			this.configure(fileName);
 			Game game = new Game(playerName1, playerName2, mode);
+			GridTableFrame view = new GridTableFrame(game.getBoard().getGrid());
+			game.getBoard().setView(view);
+			System.out.println("Jouer sur terminal ? Oui ou non");
+			Scanner scan = new Scanner(System.in);
+			String response = "";
+			while(!response.equalsIgnoreCase("OUI") && !response.equalsIgnoreCase("NON"))
+				 response = scan.nextLine();
+			if(response.equalsIgnoreCase("NON"))
+				view.showIt();
+			game.start();
 		} catch (Exception ex) {
 			System.out.println("Erreur de lecture de configuration " + ex.toString());
 		}

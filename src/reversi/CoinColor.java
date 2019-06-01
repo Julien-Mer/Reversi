@@ -1,6 +1,6 @@
 package reversi;
 
-enum CoinColor {
+public enum CoinColor {
 	WHITE,
 	BLACK,
 	FREE,

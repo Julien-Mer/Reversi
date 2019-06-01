@@ -2,12 +2,15 @@ package reversi;
 
 import java.util.ArrayList;
 
+import view.GridTableFrame;
+
 public class Board {
 
 	private int width;
 	private int height;
 	private Square[][] grid;
 	ArrayList<Square> changes;
+	private GridTableFrame view;
 	
 	public Board(int width, int height) {
 		this.width = width;
@@ -15,8 +18,17 @@ public class Board {
 		this.grid = new Square[width][height];
 	}
 	
+	public Square[][] getGrid() {
+		return this.grid;
+	}
+	
+	public void setView(GridTableFrame view) {
+		this.view = view;
+	}
+	
 	public void displayMap() {
 		System.out.println(this.toString());
+		view.refresh(grid);
 	}
 	
 	public int getNbrCoins(CoinColor color) {
@@ -46,7 +58,6 @@ public class Board {
 	public boolean setCoin(int x, int y, CoinColor color) {
 		boolean res = false;
 		if(this.grid[x][y].isFree() && this.checkAlignment(x, y, color)) {
-			System.out.println("OK");
 			this.changeCoin(x,y,color);
 			this.displayMap();
 			res = true;
