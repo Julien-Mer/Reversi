@@ -98,13 +98,13 @@ public class Board {
 		boolean res = false;
 		if(this.grid[x][y].isFree() && this.checkAlignment(x, y, color)) {
 			this.changeCoin(x,y,color);
-			this.displayMap(color);
 			res = true;
 		}
 		return res;
 	}
 	
 	public void changeCoin(int x, int y, CoinColor color) {
+		 this.displayMap(color);
 		 grid[x][y].setColor(color);
 		 for(Square square : this.getChanges(x, y, color))
 			 square.setColor(color);

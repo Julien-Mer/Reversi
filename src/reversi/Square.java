@@ -43,6 +43,14 @@ public class Square {
 		return res;
 	}
 	
+	public int getX() {
+		return this.x;
+	}
+	
+	public int getY() {
+		return this.y;
+	}
+	
 	public boolean isFree() {
 		 return color==CoinColor.FREE;
 	}

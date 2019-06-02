@@ -1,5 +1,7 @@
 package reversi;
 
+import java.util.ArrayList;
+
 public class AutoPlayer extends Player {
 	
 	public AutoPlayer(String name, Board board) {
@@ -7,8 +9,17 @@ public class AutoPlayer extends Player {
 	}
 	
 	public void play() {
-		System.out.println("Autoplay");
-		this.board.displayMap(this.getCoinColor());
+		ArrayList<Square> possibilities = this.board.getPossibilities(this.getCoinColor());
+		int newCoins = 0;
+		Square choice = null;
+		for(Square possibility : possibilities) {
+			int coins = this.board.getChanges(possibility.getX(), possibility.getY(), possibility.getColor()).size();
+			if(coins >= newCoins) {
+				choice = possibility;
+				newCoins = coins;
+			}
+		}
+		this.board.setCoin(choice.getX(), choice.getY(), this.getCoinColor());
 		this.board.getGame().play();
 	}
 	
