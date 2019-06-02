@@ -10,7 +10,6 @@ public class Board {
 	private int width;
 	private int height;
 	private Square[][] grid;
-	ArrayList<Square> changes;
 	private GridTableFrame view;
 	private CoinColor playingColor;
 	private boolean terminal;
@@ -105,11 +104,53 @@ public class Board {
 		return res;
 	}
 	
-	 public void changeCoin(int x, int y, CoinColor color) {
+	public void changeCoin(int x, int y, CoinColor color) {
 		 grid[x][y].setColor(color);
-		 for(Square square : changes)
+		 for(Square square : this.getChanges(x, y, color))
 			 square.setColor(color);
 	 }
+	 
+	public ArrayList<Square> getLocalChanges(int x, int y, int incX, int incY, CoinColor color) {
+		ArrayList<Square> res = new ArrayList<Square>();
+		ArrayList<Square> localChanges = new ArrayList<Square>();
+		boolean emp = false;
+		int i = x + incX, j = y + incY;
+		boolean condX, condY;
+		if(incX < 0) condX = i > 0;
+		else condX = i < width-1;
+		if(incY < 0) condY = j > 0;
+		else condY = j < height-1;
+		
+		while(condX && condY && !emp) {
+			if(grid[i][j].getColor() == color) {
+				res.addAll(localChanges);
+				localChanges = new ArrayList<Square>();
+			} else if(grid[i][j].isUsed()) 
+				localChanges.add(grid[i][j]);
+			else
+				emp = true;
+			i = i + incX;
+			j = j + incY;
+			if(incX < 0) condX = i > 0;
+			else condX = i < width-1;
+			if(incY < 0) condY = j > 0;
+			else condY = j < height-1;
+		}
+		return res;
+	}
+	
+	public ArrayList<Square> getChanges(int x, int y, CoinColor color) {
+		ArrayList<Square> changes = new ArrayList<Square>();
+		changes.addAll(this.getLocalChanges(x, y, 1, 0, color)); // Bottom of the case
+		changes.addAll(this.getLocalChanges(x, y, -1, 0, color)); // Top of the case
+		changes.addAll(this.getLocalChanges(x, y, 0, -1, color)); // Left of the case
+		changes.addAll(this.getLocalChanges(x, y, 0, 1, color)); // Rigth of the case
+		changes.addAll(this.getLocalChanges(x, y, -1, -1, color)); // Top left diag of the case
+		changes.addAll(this.getLocalChanges(x, y, -1, 1, color)); // Top right diag of the case
+		changes.addAll(this.getLocalChanges(x, y, 1, -1, color)); // Bottom left diag of the case
+		changes.addAll(this.getLocalChanges(x, y, 1, 1, color)); // Bottom right diag of the case
+		return changes;
+	}
 	 
 	public int getWidth() {
 		return this.width;
@@ -119,138 +160,52 @@ public class Board {
 		return this.height;
 	}
 	
+	public boolean globalAlignment(int x, int y, int incX, int incY, CoinColor color) {
+		boolean res = false, emp = false;
+		int i = x + incX, j = y + incY;
+		boolean condX, condY;
+		if(incX < 0) condX = i > 0;
+		else condX = i < width-1;
+		if(incY < 0) condY = j > 0;
+		else condY = j < height-1;
+		if(condX && condY && this.grid[i][j].getColor() != color && this.grid[i][j].isUsed()) {
+			while(condX && condY && !res && !emp) {
+				if(grid[i][j].getColor() == color) {
+					res = true;
+				} else if(!grid[i][j].isUsed()) 
+					emp = true;
+				i = i + incX;
+				j = j + incY;
+				if(incX < 0) condX = i > 0;
+				else condX = i < width-1;
+				if(incY < 0) condY = j > 0;
+				else condY = j < height-1;
+			}
+		}
+		return res;
+	}
+	
 	public boolean checkAlignment(int x, int y, CoinColor color) {
 		Boolean res = false;
-		changes = new ArrayList<Square>();
 		if(this.checkHAlignment(x, y, color) || this.checkLDAlignment(x, y, color) || this.checkVAlignment(x, y, color) || this.checkWDAlignment(x, y, color))
 			res = true;
 		return res;
 	}
-	//System.out.println("pos: " + x + "," + j + " color: " + this.grid[x][j].getRepresentation());
+	
 	private boolean checkHAlignment(int x, int y, CoinColor color) {
-		boolean res = false;
-		if(y > 0 && this.grid[x][y-1].getColor() != color && this.grid[x][y-1].isUsed()) {
-			ArrayList<Square> localChanges = new ArrayList<Square>();
-			for(int j = y-1; j >= 0; j--) {
-				if(this.grid[x][j].getColor() == color) {
-					res = true;
-					this.changes.addAll(localChanges);
-					localChanges = new ArrayList<Square>();
-				} else 
-					localChanges.add(this.grid[x][j]);
-					
-			}
-		}
-		if(y < (this.height-1) && this.grid[x][y+1].getColor() != color && this.grid[x][y+1].isUsed()) {
-			ArrayList<Square> localChanges = new ArrayList<Square>();
-			for(int j = y; j < this.height; j++) {
-				if(this.grid[x][j].getColor() == color) {
-					res = true;
-					this.changes.addAll(localChanges);
-					localChanges = new ArrayList<Square>();
-				} else
-					localChanges.add(this.grid[x][j]);
-			}
-		}
-		return res;
+		return globalAlignment(x, y, 0, 1, color) || globalAlignment(x, y, 0, -1, color);
 	}
 	
 	public boolean checkLDAlignment(int x, int y, CoinColor color) {
-		boolean res = false;
-		
-		if(x > 0 && y < (this.height - 1) && this.grid[x-1][y+1].getColor() != color && this.grid[x-1][y+1].isUsed()) {
-			ArrayList<Square> localChanges = new ArrayList<Square>();
-			int i = x;
-			int j = y;
-			while(i >= 0 && j < this.height) {
-				if(this.grid[i][j].getColor() == color) {
-					res = true;
-					this.changes.addAll(localChanges);
-					localChanges = new ArrayList<Square>();
-				} else
-					localChanges.add(this.grid[i][j]);
-				i--;
-				j++;
-			}
-		}
-		if(y > 0 && x < (this.width - 1) && this.grid[x+1][y-1].getColor() != color && this.grid[x+1][y-1].isUsed()) {
-			ArrayList<Square> localChanges = new ArrayList<Square>();
-			int i = x;
-			int j = y;
-			while(j >= 0 && i < this.width) {
-				if(this.grid[i][j].getColor() == color) {
-					res = true;
-					this.changes.addAll(localChanges);
-					localChanges = new ArrayList<Square>();
-				} else
-					localChanges.add(this.grid[i][j]);
-				i++;
-				j--;
-			}
-		}
-		return res;
+		return globalAlignment(x, y, -1, 1, color) || globalAlignment(x, y, 1, -1, color);
 	}
 	
 	private boolean checkWDAlignment(int x, int y, CoinColor color) {
-		boolean res = false;
-		if(x > 0 && y > 0 && this.grid[x-1][y-1].getColor() != color && this.grid[x-1][y-1].isUsed()) {
-			ArrayList<Square> localChanges = new ArrayList<Square>();
-			int i = x;
-			int j = y;
-			while(i >= 0 && j >= 0) {
-				if(this.grid[i][j].getColor() == color) {
-					res = true;
-					this.changes.addAll(localChanges);
-					localChanges = new ArrayList<Square>();
-				} else
-					localChanges.add(this.grid[i][j]);
-				i--;
-				j--;
-			}
-		}
-		if(y < (this.height - 1) && x < (this.width - 1) && this.grid[x+1][y+1].getColor() != color && this.grid[x+1][y+1].isUsed()) {
-			ArrayList<Square> localChanges = new ArrayList<Square>();
-			int i = x;
-			int j = y;
-			while(j < this.height && i < this.width) {
-				if(this.grid[i][j].getColor() == color) {
-					res = true;
-					this.changes.addAll(localChanges);
-					localChanges = new ArrayList<Square>();
-				} else
-					localChanges.add(this.grid[i][j]);
-				i++;
-				j++;
-			}
-		}
-		return res;
+		return globalAlignment(x, y, -1, -1, color) || globalAlignment(x, y, 1, 1, color);
 	}
 	
 	private boolean checkVAlignment(int x, int y, CoinColor color) {
-		boolean res = false;
-		if(x > 0 && this.grid[x-1][y].getColor() != color && this.grid[x-1][y].isUsed()) {
-			ArrayList<Square> localChanges = new ArrayList<Square>();
-			for(int j = x-1; j >= 0; j--) {
-				if(this.grid[j][y].getColor() == color) {
-					res = true;
-					this.changes.addAll(localChanges);
-					localChanges = new ArrayList<Square>();
-				} else
-					localChanges.add(this.grid[j][y]);
-			}
-		}
-		if(x < (this.width-1) && this.grid[x+1][y].getColor() != color && this.grid[x+1][y].isUsed()) {
-			ArrayList<Square> localChanges = new ArrayList<Square>();
-			for(int j = x; j < this.width; j++) {
-				if(this.grid[j][y].getColor() == color) {
-					res = true;
-					this.changes.addAll(localChanges);
-					localChanges = new ArrayList<Square>();
-				} else
-					localChanges.add(this.grid[j][y]);
-			}
-		}
-		return res;
+		return globalAlignment(x, y, 1, 0, color) || globalAlignment(x, y, -1, 0, color);
 	}
 	
 	public String toString() {
