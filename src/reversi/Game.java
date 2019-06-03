@@ -24,8 +24,9 @@ public class Game implements IGame {
 		Player p = timeLine.remove(0);
 		timeLine.add(p);
 		board.setPlayingColor(p.getCoinColor());
-		if(p.board.getPossibilities(p.getCoinColor()).size() > 0) {
+		if(p.board.getPossibilities(p.getCoinColor()).size() > 0 && p.getCoinsRemaining() > 0) {
 			p.play();
+			p.setCoinsRemaining(p.getCoinsRemaining() -1);
 			passed = false;
 		} else {
 			if(passed) {
@@ -61,9 +62,14 @@ public class Game implements IGame {
 		}
 		System.out.println("Victoire de " + winner.name + " avec un score de " + scoreMax);
 	}
+
+	public void initCoins(int coins) {
+		this.player1.setCoinsRemaining(coins);
+		this.player2.setCoinsRemaining(coins);
+	}
 	
-	public Game(String playerName1, String playerName2, Mode mode) {
-		this.board = new Board(15, 15);
+	public Game(String playerName1, String playerName2, Mode mode, int size) {
+		this.board = new Board(size, size);
 		System.out.println("--- Initialisation du tableau ---");
 		this.initalizeBoard();
 		if(mode == Mode.AA)
@@ -84,11 +90,11 @@ public class Game implements IGame {
 		for(int i = 0; i < this.board.getWidth(); i++) {
 			for(int j = 0; j < this.board.getHeight(); j++) {
 				CoinColor color;
-				if(j > ((this.board.getWidth()/2) + i) || (i > (this.board.getHeight()/2) && j < i - (this.board.getWidth()/2)))
+				if(j > (this.board.getWidth()/2 + i) || (i > this.board.getHeight()/2 && j < i - this.board.getWidth()/2))
 					color = CoinColor.NONE;
-				else if(j == this.board.getWidth()/2 && i == this.board.getHeight()/2 || j == this.board.getWidth()/2+1 && i == this.board.getWidth()/2+1)
+				else if(j == (int)(this.board.getWidth()-1)/2 && i == (int)((this.board.getHeight()-1)/2) || j == (int)((this.board.getWidth()-1)/2)+1 && i == (int)((this.board.getWidth()-1)/2)+1)
 					color = CoinColor.WHITE;
-				else if(j == this.board.getWidth()/2 && i == this.board.getHeight()/2+1 || j == this.board.getWidth()/2+1 && i == this.board.getWidth()/2)
+				else if(j == (int)((this.board.getWidth()-1)/2) && i == (int)((this.board.getHeight()-1)/2)+1 || j == (int)((this.board.getWidth()-1)/2)+1 && i == (int)((this.board.getWidth()-1)/2))
 					color = CoinColor.BLACK;
 				else
 					color = CoinColor.FREE;

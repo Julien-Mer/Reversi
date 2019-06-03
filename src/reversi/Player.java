@@ -4,6 +4,7 @@ public class Player {
 	
 	protected String name;
 	protected Board board;
+	protected int coinsRemaining;
 	
 	public Player(String name, Board board) {
 		this.board = board;
@@ -20,6 +21,14 @@ public class Player {
 	
 	public CoinColor getCoinColor() {
 		return this.color;
+	}
+	
+	public int getCoinsRemaining() {
+		return this.coinsRemaining;
+	}
+	
+	public void setCoinsRemaining(int coinsRemaining) {
+		this.coinsRemaining = coinsRemaining;
 	}
 	
 }

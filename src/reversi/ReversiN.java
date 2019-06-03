@@ -16,23 +16,104 @@ public class ReversiN {
 	public ReversiN(String fileName, String playerName1, String playerName2) {
 		try {
 			this.configure(fileName);
-			this.gameplay = new Game(playerName1, playerName2, mode);
-			GridTableFrame view = new GridTableFrame(this.gameplay.getBoard().getGrid());
-			this.gameplay.getBoard().setView(view);
-			System.out.println("Jouer sur terminal ? Oui ou non");
-			Scanner scan = new Scanner(System.in);
-			String response = "";
-			while(!response.equalsIgnoreCase("OUI") && !response.equalsIgnoreCase("NON"))
-				 response = scan.nextLine();
-			if(response.equalsIgnoreCase("NON")) {
-				this.gameplay.getBoard().setTerminal(false);
-				view.showIt();
-			} else
-				this.gameplay.getBoard().setTerminal(true);
-			this.gameplay.start();
 		} catch (Exception ex) {
-			System.out.println("Erreur de lecture de configuration " + ex.toString());
+			System.out.println("Impossible de lire la configuration");
+			this.newGame(playerName1, playerName2);
 		}
+		this.initGame(playerName1, playerName2);
+	}
+	
+	public ReversiN(String playerName1, String playerName2) {
+		this.newGame(playerName1, playerName2);
+		this.initGame(playerName1, playerName2);
+	}
+	
+	public void initGame(String playerName1, String playerName2) {
+		this.gameplay = new Game(playerName1, playerName2, this.mode, this.size);
+		GridTableFrame view = new GridTableFrame(this.gameplay.getBoard().getGrid());
+		this.gameplay.getBoard().setView(view);
+		
+		System.out.println("Jouer sur terminal ? Oui ou non");
+		Scanner scan = new Scanner(System.in);
+		String response = "";
+		while(!response.equalsIgnoreCase("OUI") && !response.equalsIgnoreCase("NON"))
+			 response = scan.nextLine();
+		if(response.equalsIgnoreCase("NON")) {
+			this.gameplay.getBoard().setTerminal(false);
+			view.showIt();
+		} else
+			this.gameplay.getBoard().setTerminal(true);
+		this.gameplay.initCoins(this.nbCoin);
+		this.gameplay.start();
+	}
+	
+	public Mode getMode(int mode) {
+		Mode res = null;
+		switch(mode) {
+			case 0:
+				res = Mode.AA;
+				break;
+			case 1:
+				res = Mode.HA;
+				break;
+			case 2:
+				res = Mode.HH;
+				break;
+			default:
+				res = Mode.HA;
+		}
+		return res;
+	}
+	
+	public void newGame(String playerName1, String playerName2) {
+		Scanner scan = new Scanner(System.in);
+		System.out.println("--- Nouvelle configuration ---");
+		int size = -1;
+		while(size <= 0) {
+			try {
+				System.out.println("Taille du tableau:");
+				size = scan.nextInt();
+			} catch(Exception ex) { }
+		}
+		int nbCoin = -1;
+		while(nbCoin <= 0) {
+			try {
+				System.out.println("Nombre de pièces:");
+				nbCoin = scan.nextInt();
+			} catch(Exception ex) { }
+		}
+		int mode = -1;
+		while(mode < 0 || mode > 2) {
+			try {
+				System.out.println("Mode de jeu:");
+				System.out.println("0 - Ordinateur vs Ordinateur");
+				System.out.println("1 - Joueur vs Ordinateur");
+				System.out.println("2 - Joueur vs Joueur");
+				mode = scan.nextInt();
+			} catch(Exception ex) { }
+		}
+		this.configure(0, size, nbCoin, mode);
+		System.out.println("Voulez-vous sauvegarder cette configuration ? Oui ou non");
+		String response = "";
+		while(!response.equalsIgnoreCase("OUI") && !response.equalsIgnoreCase("NON"))
+			 response = scan.nextLine();
+		if(response.equalsIgnoreCase("OUI")) {
+			System.out.println("Nom de cette configuration: ");
+			response = scan.nextLine();
+			try {
+				this.saveConfiguration(response);
+			} catch(Exception ex) {
+				System.out.println("Erreur lors de l'écriture de la configuration: " + ex.toString());
+			}
+		}
+	}
+	
+	public void configure(int minSize, int size, int nbCoin, int mode) {
+		this.MINSIZE = minSize;
+		this.size = size;
+		this.nbCoin = nbCoin;
+		this.mode = this.getMode(mode);
+		this.config = minSize + ";" + size + ";" + nbCoin + ";" + mode;
 	}
 	
 	public void configure(String fileName) throws Exception {
@@ -49,14 +130,19 @@ public class ReversiN {
 		this.MINSIZE = Integer.valueOf(elements[0]); 
 		this.size = Integer.valueOf(elements[1]);
 		this.nbCoin = Integer.valueOf(elements[2]);
-		int mode = Integer.valueOf(elements[3]);
-		if(mode == 0)
-			this.mode = Mode.AA;
-		else if(mode == 1)
-			this.mode = Mode.HA;
-		else if(mode == 2)
-			this.mode = Mode.HH;
+		this.mode = this.getMode(Integer.valueOf(elements[3]));
 		this.config = config;
+		in.close();
+		if(this.MINSIZE <= 0 || this.size <= 0 || this.nbCoin <= 0)
+			throw new Exception ("Configuration corrompue");
+	}
+	
+	public void saveConfiguration(String fileName) throws Exception {
+		OutputStream out = new FileOutputStream(fileName);
+		BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(out));
+		buffer.write(this.config);
+		buffer.flush();
+		out.close();
 	}
 	
 	public void printConfiguration() {
