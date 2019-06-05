@@ -8,7 +8,7 @@ import view.*;
 public class ReversiN {
 	private int size;
 	private int nbCoin;
-	private int MINSIZE = 4;
+	private int MINSIZE;
 	private Mode mode;
 	private Game gameplay;
 	String config;
@@ -17,7 +17,7 @@ public class ReversiN {
 		try {
 			this.configure(fileName);
 		} catch (Exception ex) {
-			System.out.println("Impossible de lire la configuration");
+			System.out.println("Impossible de lire la configuration: " + ex.toString());
 			this.newGame(playerName1, playerName2);
 		}
 		this.initGame(playerName1, playerName2);
@@ -43,7 +43,7 @@ public class ReversiN {
 			view.showIt();
 		} else
 			this.gameplay.getBoard().setTerminal(true);
-		this.gameplay.initCoins(this.nbCoin);
+		this.gameplay.setCoins(this.nbCoin);
 		this.gameplay.start();
 	}
 	
@@ -92,7 +92,7 @@ public class ReversiN {
 				mode = scan.nextInt();
 			} catch(Exception ex) { }
 		}
-		this.configure(0, size, nbCoin, mode);
+		this.configure(size, size, nbCoin, mode);
 		System.out.println("Voulez-vous sauvegarder cette configuration ? Oui ou non");
 		String response = "";
 		while(!response.equalsIgnoreCase("OUI") && !response.equalsIgnoreCase("NON"))

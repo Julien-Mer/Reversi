@@ -6,6 +6,7 @@ public class Game implements IGame {
 	
 	private Player player1;
 	private Player player2;
+	private int coins;
 	private List<Player> timeLine = new LinkedList<Player>();
 	private Board board;
 	
@@ -24,9 +25,9 @@ public class Game implements IGame {
 		Player p = timeLine.remove(0);
 		timeLine.add(p);
 		board.setPlayingColor(p.getCoinColor());
-		if(p.board.getPossibilities(p.getCoinColor()).size() > 0 && p.getCoinsRemaining() > 0) {
+		if(p.board.getPossibilities(p.getCoinColor()).size() > 0 && this.coins > 0) {
+			this.coins--;
 			p.play();
-			p.setCoinsRemaining(p.getCoinsRemaining() -1);
 			passed = false;
 		} else {
 			if(passed) {
@@ -63,9 +64,8 @@ public class Game implements IGame {
 		System.out.println("Victoire de " + winner.name + " avec un score de " + scoreMax);
 	}
 
-	public void initCoins(int coins) {
-		this.player1.setCoinsRemaining(coins);
-		this.player2.setCoinsRemaining(coins);
+	public void setCoins(int coins) {
+		this.coins = coins;
 	}
 	
 	public Game(String playerName1, String playerName2, Mode mode, int size) {
