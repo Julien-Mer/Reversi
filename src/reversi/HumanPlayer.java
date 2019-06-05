@@ -3,12 +3,23 @@ package reversi;
 import java.util.*;
 
 public class HumanPlayer extends Player {
+	/**
+	 * The scanner to receive user input
+	 */
 	private Scanner scan;
 	
+	/**
+	 * Create a human player
+	 * @param name name of the player
+	 * @param board the board used
+	 */
 	public HumanPlayer(String name, Board board) {
 		super(name, board);
 	}
 	
+	/**
+	 * Play method of the human player
+	 */
 	public void play() {
 		this.board.setColorView(this.getCoinColor());
 		if(this.board.getTerminal()) {

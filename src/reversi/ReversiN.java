@@ -6,13 +6,38 @@ import java.util.Scanner;
 import view.*;
 
 public class ReversiN {
+	/**
+	 * The size of the board
+	 */
 	private int size;
-	private int nbCoin;
 	private int MINSIZE;
+	
+	/**
+	 * The number of coins in the game
+	 */
+	private int nbCoin;
+	
+	/**
+	 * The mode of the game
+	 */
 	private Mode mode;
+	
+	/**
+	 * The Game used in reversi
+	 */
 	private Game gameplay;
+	
+	/**
+	 * The config used by the game
+	 */
 	String config;
 	
+	/**
+	 * Creates the game with a configuration
+	 * @param fileName the fileName of the configuration
+	 * @param playerName1 the name of the first player
+	 * @param playerName2 the name of the second player
+	 */
 	public ReversiN(String fileName, String playerName1, String playerName2) {
 		try {
 			this.configure(fileName);
@@ -23,19 +48,36 @@ public class ReversiN {
 		this.initGame(playerName1, playerName2);
 	}
 	
+	/**
+	 * Creates a new game without configuration
+	 * @param playerName1 the name of the first player
+	 * @param playerName2 the name of the second player
+	 */
 	public ReversiN(String playerName1, String playerName2) {
 		this.newGame(playerName1, playerName2);
 		this.initGame(playerName1, playerName2);
 	}
 	
+	/**
+	 * Initializes the game
+	 * @param playerName1 the name of the first player
+	 * @param playerName2 the name of the second player
+	 */
 	public void initGame(String playerName1, String playerName2) {
 		this.gameplay = new Game(playerName1, playerName2, this.mode, this.size);
 		GridTableFrame view = new GridTableFrame(this.gameplay.getBoard().getGrid());
 		this.gameplay.getBoard().setView(view);
 		
-		System.out.println("Jouer sur terminal ? Oui ou non");
+		System.out.println("Voulez vous voir la description du jeu ? Oui ou non");
 		Scanner scan = new Scanner(System.in);
 		String response = "";
+		while(!response.equalsIgnoreCase("OUI") && !response.equalsIgnoreCase("NON"))
+			 response = scan.nextLine();
+		if(response.equalsIgnoreCase("OUI")) 
+			System.out.println(this.gameplay.description());
+		
+		System.out.println("Jouer sur terminal ? Oui ou non");
+		response = "";
 		while(!response.equalsIgnoreCase("OUI") && !response.equalsIgnoreCase("NON"))
 			 response = scan.nextLine();
 		if(response.equalsIgnoreCase("NON")) {
@@ -47,6 +89,11 @@ public class ReversiN {
 		this.gameplay.start();
 	}
 	
+	/**
+	 * Gets the mode of the game by an int
+	 * @param mode the mode of the game represented by an int
+	 * @return the mode of the game
+	 */
 	public Mode getMode(int mode) {
 		Mode res = null;
 		switch(mode) {
@@ -65,6 +112,11 @@ public class ReversiN {
 		return res;
 	}
 	
+	/**
+	 * Creates a new game
+	 * @param playerName1 the name of the first player
+	 * @param playerName2 the name of the second player
+	 */
 	public void newGame(String playerName1, String playerName2) {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("--- Nouvelle configuration ---");
@@ -83,7 +135,7 @@ public class ReversiN {
 			} catch(Exception ex) { }
 		}
 		int mode = -1;
-		while(mode < 0 || mode > 2) {
+		while(mode < 0 || mode > 2) { // Si le mode de jeu est bien valide
 			try {
 				System.out.println("Mode de jeu:");
 				System.out.println("0 - Ordinateur vs Ordinateur");
@@ -108,6 +160,13 @@ public class ReversiN {
 		}
 	}
 	
+	/**
+	 * Create the configuration string 
+	 * @param minSize the minimum size
+	 * @param size the size of the board
+	 * @param nbCoin the number of coins
+	 * @param mode the mode of the game representated by an int
+	 */
 	public void configure(int minSize, int size, int nbCoin, int mode) {
 		this.MINSIZE = minSize;
 		this.size = size;
@@ -116,6 +175,11 @@ public class ReversiN {
 		this.config = minSize + ";" + size + ";" + nbCoin + ";" + mode;
 	}
 	
+	/**
+	 * Configures the game with a configuration file
+	 * @param fileName the name of the configuration
+	 * @throws Exception if the configuration is not working
+	 */
 	public void configure(String fileName) throws Exception {
 		InputStream  in = new FileInputStream(fileName);
 		String config = "";
@@ -137,6 +201,11 @@ public class ReversiN {
 			throw new Exception ("Configuration corrompue");
 	}
 	
+	/**
+	 * Saves the configuration in a file
+	 * @param fileName the name of the file
+	 * @throws Exception if the file wasn't created
+	 */
 	public void saveConfiguration(String fileName) throws Exception {
 		OutputStream out = new FileOutputStream(fileName);
 		BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(out));
@@ -145,6 +214,9 @@ public class ReversiN {
 		out.close();
 	}
 	
+	/**
+	 * Print the configuration String of the game
+	 */
 	public void printConfiguration() {
 		System.out.println(this.config);
 	}

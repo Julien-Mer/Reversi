@@ -4,10 +4,18 @@ import java.util.ArrayList;
 
 public class AutoPlayer extends Player {
 	
+	/**
+	 * AutoPlayer constructor
+	 * @param name the name of the autoplayer
+	 * @param board the board where the autoplayer will play
+	 */
 	public AutoPlayer(String name, Board board) {
 		super(name, board);
 	}
 	
+	/**
+	 * Play method of the AutoPlayer, choosing the square where it wins more coins
+	 */
 	public void play() {
 		ArrayList<Square> possibilities = this.board.getPossibilities(this.getCoinColor());
 		int newCoins = 0;
